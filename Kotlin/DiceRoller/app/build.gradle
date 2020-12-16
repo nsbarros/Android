@@ -8,6 +8,7 @@ android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "br.com.diceroller"
         minSdkVersion 15
         targetSdkVersion 30
