@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">My Number</string>
-    <string name="textNumber">What\'s your number?</string>
-    <string name="txtResultNumber">No numbers drawn</string>
-    <string name="raffle">Raffle</string>
-</resources>
