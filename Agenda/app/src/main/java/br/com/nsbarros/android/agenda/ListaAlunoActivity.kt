@@ -20,7 +20,7 @@ class ListaAlunoActivity : AppCompatActivity(R.layout.activity_lista_aluno) {
         }
 
         val lista = ArrayList<Aluno>()
-        lista.add(Aluno("Nathan", "NATHAN@GMAIL.COM", "62994083866"))
+        lista.add(Aluno("Nathan", "NATHAN@GMAIL.COM", "------------"))
 
         recyclerView.adapter = ListaAlunoAdapter(this, lista)
     }
