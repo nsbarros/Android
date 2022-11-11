@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/item_aluno_adapter_nome"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Nathan" />
+
+    <TextView
+        android:id="@+id/item_aluno_adapter_email"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/item_aluno_adapter_nome"
+        app:layout_constraintStart_toStartOf="@id/item_aluno_adapter_nome"
+        app:layout_constraintTop_toBottomOf="@id/item_aluno_adapter_nome"
+        tools:text="E-mail" />
+
+    <TextView
+        android:id="@+id/item_aluno_adapter_telefone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/item_aluno_adapter_nome"
+        app:layout_constraintStart_toStartOf="@id/item_aluno_adapter_nome"
+        app:layout_constraintTop_toBottomOf="@id/item_aluno_adapter_email"
+        tools:text="629940838" />
+</androidx.constraintlayout.widget.ConstraintLayout>
