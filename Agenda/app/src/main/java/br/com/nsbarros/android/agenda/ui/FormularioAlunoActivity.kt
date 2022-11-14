@@ -1,4 +1,4 @@
-package br.com.nsbarros.android.agenda.ui.recyclerview
+package br.com.nsbarros.android.agenda.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,18 +14,30 @@ class FormularioAlunoActivity : AppCompatActivity(R.layout.activity_formulario_a
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        bindViews()
+    }
 
+    private fun bindViews() {
         val campoNome = findViewById<EditText>(R.id.activity_formulario_aluno_nome)
         val campoEmail = findViewById<EditText>(R.id.activity_formulario_aluno_email)
         val campoPhone = findViewById<EditText>(R.id.activity_formulario_aluno_phone)
         val btnSalvar = findViewById<Button>(R.id.activity_formulario_aluno_btn_salvar)
 
-        btnSalvar.setOnClickListener{
-          val oAluno: Aluno = criarAluno(
-              campoNome.text.toString(),
-              campoEmail.text.toString(),
-              campoPhone.text.toString()
-          )
+        adicionarAluno(btnSalvar, campoNome, campoEmail, campoPhone)
+    }
+
+    private fun adicionarAluno(
+        btnSalvar: Button,
+        campoNome: EditText,
+        campoEmail: EditText,
+        campoPhone: EditText
+    ) {
+        btnSalvar.setOnClickListener {
+            val oAluno: Aluno = criarAluno(
+                campoNome.text.toString(),
+                campoEmail.text.toString(),
+                campoPhone.text.toString()
+            )
             dao.add(oAluno)
             finish()
         }
