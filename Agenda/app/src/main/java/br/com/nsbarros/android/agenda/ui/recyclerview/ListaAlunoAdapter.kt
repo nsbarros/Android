@@ -43,4 +43,9 @@ class ListaAlunoAdapter(
         return alunos.size
     }
 
+    fun reload(listAlunos: List<Aluno>) {
+        alunos.clear();
+        alunos.addAll(listAlunos)
+    }
+
 }
