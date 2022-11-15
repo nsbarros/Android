@@ -10,10 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Agenda">
         <activity
-            android:name=".ui.recyclerview.FormularioAlunoActivity"
+            android:name=".ui.FormularioAlunoActivity"
             android:exported="false" />
         <activity
-            android:name=".ListaAlunoActivity"
+            android:name=".ui.ListaAlunoActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

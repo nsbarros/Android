@@ -3,26 +3,30 @@ package br.com.nsbarros.android.agenda.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
+import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ListaAlunoActivity : AppCompatActivity(R.layout.activity_lista_aluno) {
+class ListaAlunoActivity : AppCompatActivity() {
 
     private val alunoDao = AlunoDao();
     private val listaAlunoAdapter = ListaAlunoAdapter(this, alunoDao.findAll())
 
+    private val binding by lazy {
+        ActivityListaAlunoBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setContentView(binding.root)
+
         configurarFab()
         configurarRecyclerView()
     }
 
     private fun configurarFab() {
-        val fab = findViewById<FloatingActionButton>(R.id.activity_lista_aluno_fab)
+        val fab = binding.activityListaAlunoFab
         fab.setOnClickListener {
             irParaFormulario()
         }
@@ -34,7 +38,7 @@ class ListaAlunoActivity : AppCompatActivity(R.layout.activity_lista_aluno) {
     }
 
     private fun configurarRecyclerView() {
-        val recyclerView = findViewById<RecyclerView>(R.id.lista_aluno_recycleview)
+        val recyclerView = binding.listaAlunoRecycleview
         recyclerView.adapter = listaAlunoAdapter
     }
 
