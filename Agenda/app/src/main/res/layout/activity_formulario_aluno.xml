@@ -5,46 +5,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/activity_formulario_aluno_nome"
+    <ImageView
+        android:id="@+id/activity_formulario_aluno_imageview"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/nome"
-        android:inputType="textCapWords"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp"/>
+        android:src="@android:drawable/ic_menu_camera"
+        android:background="#BB9E9A9E"
+        />
 
-    <EditText
-        android:id="@+id/activity_formulario_aluno_email"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_nome"
-        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_nome"
-        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_nome"/>
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3"
+        />
 
-    <EditText
-        android:id="@+id/activity_formulario_aluno_phone"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/activity_formulario_aluno_textinputlayout_nome"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/phone"
-        android:inputType="phone"
-        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_email"
-        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_email"
-        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_email"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/activity_formulario_aluno_nome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nome"
+            android:inputType="textCapWords"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/activity_formulario_aluno_textinputlayout_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_textinputlayout_nome"
+        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_textinputlayout_nome"
+        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_textinputlayout_nome"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/activity_formulario_aluno_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/activity_formulario_aluno_textinputlayout_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_textinputlayout_email"
+        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_textinputlayout_email"
+        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_textinputlayout_email"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/activity_formulario_aluno_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/phone"
+            android:inputType="phone"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/activity_formulario_aluno_btn_salvar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/activity_formulario_aluno_btnsalvar"
-        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_nome"
-        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_nome"
+        app:layout_constraintStart_toStartOf="@id/activity_formulario_aluno_textinputlayout_nome"
+        app:layout_constraintEnd_toEndOf="@id/activity_formulario_aluno_textinputlayout_nome"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_phone"
-        app:layout_constraintVertical_bias="1"/>
+        app:layout_constraintTop_toBottomOf="@id/activity_formulario_aluno_textinputlayout_phone"
+        app:layout_constraintVertical_bias="1"
+        android:layout_margin="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
