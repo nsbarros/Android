@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
+import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
@@ -30,7 +31,12 @@ class FormularioAlunoActivity : AppCompatActivity() {
         val campoPhone = binding.activityFormularioAlunoPhone
         val btnSalvar = binding.activityFormularioAlunoBtnSalvar
 
+        binding.activityFormularioAlunoImageview.setOnClickListener {
+            DialogFormularioImagem(this).mostrar();
+        }
+
         adicionarAluno(btnSalvar, campoNome, campoEmail, campoPhone)
+
     }
 
     private fun adicionarAluno(
