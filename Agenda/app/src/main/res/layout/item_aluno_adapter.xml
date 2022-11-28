@@ -19,7 +19,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/item_aluno_adapter_nome"
+            app:layout_constraintEnd_toStartOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@android:drawable/ic_menu_camera" />

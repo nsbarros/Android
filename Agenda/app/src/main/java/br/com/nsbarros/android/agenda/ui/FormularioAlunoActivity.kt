@@ -8,10 +8,12 @@ import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
+import coil.load
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
     private val dao = AlunoDao()
+    private var urlFoto: String = ""
 
     private val binding by lazy {
         ActivityFormularioAlunoBinding.inflate(layoutInflater)
@@ -32,10 +34,13 @@ class FormularioAlunoActivity : AppCompatActivity() {
         val btnSalvar = binding.activityFormularioAlunoBtnSalvar
 
         binding.activityFormularioAlunoImageview.setOnClickListener {
-            DialogFormularioImagem(this).mostrar();
+            DialogFormularioImagem(this).mostrar{ urlImagem ->
+                urlFoto = urlImagem
+                binding.activityFormularioAlunoImageview.load(urlFoto)
+            }
         }
 
-        adicionarAluno(btnSalvar, campoNome, campoEmail, campoPhone)
+        adicionarAluno(btnSalvar, campoNome, campoEmail, campoPhone, urlFoto)
 
     }
 
@@ -43,24 +48,27 @@ class FormularioAlunoActivity : AppCompatActivity() {
         btnSalvar: Button,
         campoNome: EditText,
         campoEmail: EditText,
-        campoPhone: EditText
+        campoPhone: EditText,
+        campoUrl: String
     ) {
         btnSalvar.setOnClickListener {
             val oAluno: Aluno = criarAluno(
                 campoNome.text.toString(),
                 campoEmail.text.toString(),
-                campoPhone.text.toString()
+                campoPhone.text.toString(),
+                urlFoto,
             )
             dao.add(oAluno)
             finish()
         }
     }
 
-    private fun criarAluno(nome: String, email: String, phone: String): Aluno {
+    private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
         return Aluno(
             nome,
             email,
-            phone
+            phone,
+            url,
         )
 
     }

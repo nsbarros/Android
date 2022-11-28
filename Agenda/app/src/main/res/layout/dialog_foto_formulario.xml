@@ -39,6 +39,7 @@
             app:layout_constraintTop_toBottomOf="@id/dialog_foto_formulario_button_carregarfoto">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialog_foto_formulario_edittext_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"

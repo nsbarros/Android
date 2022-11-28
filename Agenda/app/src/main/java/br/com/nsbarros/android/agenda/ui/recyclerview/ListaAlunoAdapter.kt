@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import br.com.nsbarros.android.agenda.databinding.ItemAlunoAdapterBinding
 import br.com.nsbarros.android.agenda.model.Aluno
+import coil.load
 
 class ListaAlunoAdapter(
     private val context: Context,
@@ -20,12 +21,14 @@ class ListaAlunoAdapter(
         private val campoNome = binding.itemAlunoAdapterNome
         private val campoEmail = binding.itemAlunoAdapterEmail
         private val campoTelefone = binding.itemAlunoAdapterTelefone
+        private val imagemViewFoto = binding.itemAlunoImagem
 
         fun bind(aluno: Aluno) {
 
             campoNome.text = aluno.nome
             campoEmail.text = aluno.email
             campoTelefone.text = aluno.telefone
+            imagemViewFoto.load(aluno.url)
         }
     }
 
@@ -45,6 +48,7 @@ class ListaAlunoAdapter(
     fun reload(listAlunos: List<Aluno>) {
         alunos.clear();
         alunos.addAll(listAlunos)
+        notifyDataSetChanged()
     }
 
 }

@@ -49,6 +49,5 @@ class ListaAlunoActivity : AppCompatActivity() {
 
     private fun reload() {
         listaAlunoAdapter.reload(alunoDao.findAll())
-        listaAlunoAdapter.notifyDataSetChanged();
     }
 }
