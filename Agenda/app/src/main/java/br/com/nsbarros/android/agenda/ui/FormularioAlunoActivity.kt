@@ -12,7 +12,8 @@ import coil.load
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
-    private val dao = AlunoDao()
+    lateinit var dao : AlunoDao
+
     private var urlFoto: String = ""
 
     private val binding by lazy {
@@ -25,6 +26,11 @@ class FormularioAlunoActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         bindViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dao = AlunoDao(this);
     }
 
     private fun bindViews() {
@@ -64,7 +70,7 @@ class FormularioAlunoActivity : AppCompatActivity() {
     }
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
-        return Aluno(
+        return Aluno(0,
             nome,
             email,
             phone,

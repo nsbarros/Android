@@ -10,21 +10,33 @@ import coil.load
 
 class ListaAlunoAdapter(
     private val context: Context,
-    alunos: List<Aluno>
+    alunos: List<Aluno> = emptyList(),
+    var whenClickItem: (aluno: Aluno) -> Unit = {}
 ) :
     RecyclerView.Adapter<ListaAlunoAdapter.ViewHolder>() {
 
     private val alunos = alunos.toMutableList()
 
-    class ViewHolder(binding: ItemAlunoAdapterBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    inner class ViewHolder(binding: ItemAlunoAdapterBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private val campoNome = binding.itemAlunoAdapterNome
         private val campoEmail = binding.itemAlunoAdapterEmail
         private val campoTelefone = binding.itemAlunoAdapterTelefone
         private val imagemViewFoto = binding.itemAlunoImagem
 
-        fun bind(aluno: Aluno) {
+        private lateinit var aluno: Aluno
 
+        init {
+            itemView.setOnClickListener{
+                if(::aluno.isInitialized){
+                    whenClickItem(aluno)
+                }
+            }
+        }
+
+        fun bind(aluno: Aluno) {
+            this.aluno = aluno
             campoNome.text = aluno.nome
             campoEmail.text = aluno.email
             campoTelefone.text = aluno.telefone
@@ -38,7 +50,9 @@ class ListaAlunoAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(alunos[position])
+
+        val aluno = alunos[position]
+        holder.bind(aluno)
     }
 
     override fun getItemCount(): Int {

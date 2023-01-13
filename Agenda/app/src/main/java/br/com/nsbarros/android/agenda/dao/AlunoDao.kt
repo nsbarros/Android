@@ -1,19 +1,20 @@
 package br.com.nsbarros.android.agenda.dao
 
+import android.content.Context
+import br.com.nsbarros.android.agenda.database.AppDatabase
 import br.com.nsbarros.android.agenda.model.Aluno
 
-class AlunoDao {
+class AlunoDao(val context: Context) {
+
+    private val db = AppDatabase.instance(context)
 
     fun add(aluno: Aluno){
-        list.add(aluno)
+
+        db.daoAluno().insert(aluno)
     }
 
     fun findAll(): List<Aluno>{
-        return list.toList()
-    }
-
-    companion object {
-        val list = mutableListOf<Aluno>()
+        return db.daoAluno().getAll()
     }
 
 }
