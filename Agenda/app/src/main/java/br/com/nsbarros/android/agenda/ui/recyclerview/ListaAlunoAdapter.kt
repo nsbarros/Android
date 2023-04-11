@@ -1,9 +1,10 @@
 package br.com.nsbarros.android.agenda.ui.recyclerview
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.databinding.ItemAlunoAdapterBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import coil.load
@@ -11,14 +12,17 @@ import coil.load
 class ListaAlunoAdapter(
     private val context: Context,
     alunos: List<Aluno> = emptyList(),
-    var whenClickItem: (aluno: Aluno) -> Unit = {}
+    var whenClickItem: (aluno: Aluno) -> Unit = {},
+    var whenLongClickRemove: (aluno: Aluno) -> Unit = {},
+    var whenLongClickEdit: (aluno: Aluno) -> Unit = {}
 ) :
     RecyclerView.Adapter<ListaAlunoAdapter.ViewHolder>() {
 
     private val alunos = alunos.toMutableList()
 
 
-    inner class ViewHolder(binding: ItemAlunoAdapterBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(binding: ItemAlunoAdapterBinding) : RecyclerView.ViewHolder(binding.root),
+        PopupMenu.OnMenuItemClickListener {
 
         private val campoNome = binding.itemAlunoAdapterNome
         private val campoEmail = binding.itemAlunoAdapterEmail
@@ -33,6 +37,14 @@ class ListaAlunoAdapter(
                     whenClickItem(aluno)
                 }
             }
+            itemView.setOnLongClickListener {view ->
+                    PopupMenu(context, view).apply{
+                       setOnMenuItemClickListener(this@ViewHolder)
+                        menuInflater.inflate(R.menu.menu, menu)
+
+                    }.show()
+                true
+            }
         }
 
         fun bind(aluno: Aluno) {
@@ -41,6 +53,20 @@ class ListaAlunoAdapter(
             campoEmail.text = aluno.email
             campoTelefone.text = aluno.telefone
             imagemViewFoto.load(aluno.url)
+        }
+
+        override fun onMenuItemClick(menuItem: MenuItem?): Boolean {
+            val id = menuItem?.itemId
+
+            when(id){
+                R.id.remove -> {
+                    whenLongClickRemove(aluno)
+                }
+                R.id.edit -> {
+                    whenLongClickEdit(aluno)
+                }
+            }
+            return true
         }
     }
 

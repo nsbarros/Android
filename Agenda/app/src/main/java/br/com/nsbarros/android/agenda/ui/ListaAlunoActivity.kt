@@ -2,16 +2,27 @@ package br.com.nsbarros.android.agenda.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
+import br.com.nsbarros.android.agenda.database.AppDatabase
+import br.com.nsbarros.android.agenda.database.dao.AlunoDaoI
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
 
-class ListaAlunoActivity : AppCompatActivity() {
+class ListaAlunoActivity : AppCompatActivity(){
 
-    private val listaAlunoAdapter = ListaAlunoAdapter(this, alunos = emptyList(), whenClickItem =  {aluno -> irParaDetalhes(aluno)})
+    private val listaAlunoAdapter = ListaAlunoAdapter(this, alunos = emptyList(), whenClickItem =  {aluno -> irParaDetalhes(aluno)},
+    whenLongClickRemove = {aluno -> deleteAluno(aluno)},
+    whenLongClickEdit = {aluno -> editAluno(aluno)})
+
+    private lateinit var dao : AlunoDaoI
+    private lateinit var aluno : Aluno
 
     private val binding by lazy {
         ActivityListaAlunoBinding.inflate(layoutInflater)
@@ -24,6 +35,7 @@ class ListaAlunoActivity : AppCompatActivity() {
 
         configurarFab()
         configurarRecyclerView()
+        dao = AppDatabase.instance(this).daoAluno();
     }
 
     private fun configurarFab() {
@@ -56,7 +68,15 @@ class ListaAlunoActivity : AppCompatActivity() {
     }
 
     private fun reload() {
-
         listaAlunoAdapter.reload(AlunoDao(this).findAll())
+    }
+
+    private fun editAluno(mAluno: Aluno) {
+        irParaDetalhes(mAluno)
+    }
+
+    private fun deleteAluno(mAluno: Aluno) {
+        dao.delete(aluno = mAluno)
+        reload()
     }
 }
