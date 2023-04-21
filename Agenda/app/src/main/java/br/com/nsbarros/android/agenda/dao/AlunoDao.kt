@@ -23,4 +23,12 @@ class AlunoDao(val context: Context) {
         db.daoAluno().delete(aluno)
     }
 
+    fun findAllNameDesc(): List<Aluno> {
+        return db.daoAluno().findAllOrderByNameDesc()
+    }
+
+    fun findAllNameAsc(): List<Aluno> {
+        return db.daoAluno().findAllOrderByNameAsc()
+    }
+
 }

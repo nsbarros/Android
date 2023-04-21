@@ -10,6 +10,10 @@ import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
 import coil.load
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
@@ -24,6 +28,8 @@ class FormularioAlunoActivity : AppCompatActivity() {
     private val dao by lazy {
         AlunoDao(this)
     }
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +52,12 @@ class FormularioAlunoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        dao.findById(idAluno)?.let {
-            tryLoading(it)
+        scope.launch {
+            dao.findById(idAluno)?.let {
+                withContext(Dispatchers.Main){
+                    tryLoading(it)
+                }
+            }
         }
     }
 
@@ -60,7 +69,7 @@ class FormularioAlunoActivity : AppCompatActivity() {
         val btnSalvar = binding.activityFormularioAlunoBtnSalvar
 
         binding.activityFormularioAlunoImageview.setOnClickListener {
-            DialogFormularioImagem(this).mostrar{ urlImagem ->
+            DialogFormularioImagem(this).mostrar { urlImagem ->
                 urlFoto = urlImagem
                 binding.activityFormularioAlunoImageview.load(urlFoto)
             }
@@ -85,14 +94,17 @@ class FormularioAlunoActivity : AppCompatActivity() {
                 urlFoto,
             )
 
-            dao.add(oAluno)
+            scope.launch {
+                dao.add(oAluno)
+                finish()
+            }
 
-            finish()
         }
     }
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
-        return Aluno(idAluno.toLong(),
+        return Aluno(
+            idAluno.toLong(),
             nome,
             email,
             phone,

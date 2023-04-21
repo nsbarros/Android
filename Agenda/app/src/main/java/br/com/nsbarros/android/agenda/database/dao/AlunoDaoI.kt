@@ -21,4 +21,9 @@ interface AlunoDaoI {
     @Query("SELECT * FROM Aluno WHERE id =:id")
     fun findByID(id: Long): Aluno?
 
+    @Query("SELECT * FROM Aluno order by nome asc")
+    fun findAllOrderByNameAsc() : List<Aluno>
+    @Query("SELECT * FROM Aluno order by nome desc")
+    fun findAllOrderByNameDesc(): List<Aluno>
+
 }
