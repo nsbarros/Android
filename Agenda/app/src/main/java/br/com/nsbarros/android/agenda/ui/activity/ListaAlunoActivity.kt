@@ -1,13 +1,8 @@
-package br.com.nsbarros.android.agenda.ui
+package br.com.nsbarros.android.agenda.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.database.AppDatabase
 import br.com.nsbarros.android.agenda.database.dao.AlunoDaoI
@@ -52,7 +47,7 @@ class ListaAlunoActivity : AppCompatActivity(){
 
     private fun irParaDetalhes(aluno: Aluno) {
         val intentGoDetails = Intent(this, DetalhesAluno::class.java)
-        intentGoDetails.putExtra(DetalhesAluno.ALUNO, aluno)
+        intentGoDetails.putExtra(IDALUNO, aluno.id)
         startActivity(intentGoDetails)
     }
 

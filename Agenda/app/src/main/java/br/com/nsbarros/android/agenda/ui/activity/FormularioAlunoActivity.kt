@@ -1,5 +1,6 @@
-package br.com.nsbarros.android.agenda.ui
+package br.com.nsbarros.android.agenda.ui.activity
 
+import android.R
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -12,26 +13,45 @@ import coil.load
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
-    lateinit var dao : AlunoDao
-
     private var urlFoto: String = ""
+
+    private var idAluno = 0L;
 
     private val binding by lazy {
         ActivityFormularioAlunoBinding.inflate(layoutInflater)
     }
 
+    private val dao by lazy {
+        AlunoDao(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(binding.root)
-
         bindViews()
+        idAluno = intent.getLongExtra(IDALUNO, 0L)
+    }
+
+    private fun tryLoading(mAluno: Aluno) {
+        urlFoto = mAluno.url.toString()
+        binding.activityFormularioAlunoImageview.load(mAluno.url) {
+            error(R.drawable.stat_notify_error)
+            fallback(R.drawable.stat_notify_error)
+            placeholder(R.drawable.btn_default)
+        }
+        binding.activityFormularioAlunoNome.setText(mAluno.nome)
+        binding.activityFormularioAlunoEmail.setText(mAluno.email)
+        binding.activityFormularioAlunoPhone.setText(mAluno.telefone)
     }
 
     override fun onResume() {
         super.onResume()
-        dao = AlunoDao(this);
+
+        dao.findById(idAluno)?.let {
+            tryLoading(it)
+        }
     }
+
 
     private fun bindViews() {
         val campoNome = binding.activityFormularioAlunoNome
@@ -64,13 +84,15 @@ class FormularioAlunoActivity : AppCompatActivity() {
                 campoPhone.text.toString(),
                 urlFoto,
             )
+
             dao.add(oAluno)
+
             finish()
         }
     }
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
-        return Aluno(0,
+        return Aluno(idAluno.toLong(),
             nome,
             email,
             phone,

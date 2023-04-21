@@ -12,13 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Agenda">
         <activity
-            android:name=".ui.DetalhesAluno"
+            android:name=".ui.activity.DetalhesAluno"
             android:exported="false" />
         <activity
-            android:name=".ui.FormularioAlunoActivity"
+            android:name=".ui.activity.FormularioAlunoActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ListaAlunoActivity"
+            android:name=".ui.activity.ListaAlunoActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

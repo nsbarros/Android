@@ -6,13 +6,19 @@ import br.com.nsbarros.android.agenda.model.Aluno
 @Dao
 interface AlunoDaoI {
 
-    @Insert
-    fun insert(aluno: Aluno)
+    @Update
+    fun update(aluno: Aluno)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertOrReplace(aluno: Aluno)
 
     @Delete
     fun delete(aluno: Aluno)
 
     @Query("SELECT * FROM Aluno")
     fun getAll() : List<Aluno>
+
+    @Query("SELECT * FROM Aluno WHERE id =:id")
+    fun findByID(id: Long): Aluno?
 
 }
