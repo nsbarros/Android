@@ -13,6 +13,7 @@ import br.com.nsbarros.android.agenda.databinding.ActivityDetalhesAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import coil.load
 import coil.request.Disposable
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class DetalhesAluno : AppCompatActivity() {
@@ -32,22 +33,15 @@ class DetalhesAluno : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
        idAluno = intent.getLongExtra(IDALUNO, 0L)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        buscarAluno()
-    }
-
-    private fun buscarAluno() {
         lifecycleScope.launch {
-            aluno = dao.findById(idAluno)
-            aluno?.let {
-                tryLoading(it)
-            } ?: finish()
+            dao.findById(idAluno).collect { mAluno ->
+                aluno = mAluno
+                aluno?.let {
+                    tryLoading(it)
+                } ?: finish()
+            }
         }
     }
-
     private fun tryLoading(aluno: Aluno): Disposable {
         binding.activityDetalhesAlunoButtonName.text = aluno.nome
         binding.activityDetalhesAlunoDescricaoAluno.text =

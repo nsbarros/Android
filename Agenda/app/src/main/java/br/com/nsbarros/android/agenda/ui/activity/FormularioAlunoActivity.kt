@@ -14,6 +14,7 @@ import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
 import coil.load
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class FormularioAlunoActivity : AppCompatActivity() {
@@ -35,6 +36,13 @@ class FormularioAlunoActivity : AppCompatActivity() {
         setContentView(binding.root)
         bindViews()
         idAluno = intent.getLongExtra(IDALUNO, 0L)
+        lifecycleScope.launch {
+            dao.findById(idAluno).collect { mAluno ->
+                mAluno?.let {
+                    tryLoading(it)
+                }
+            }
+        }
     }
 
     private fun tryLoading(mAluno: Aluno) {
@@ -48,16 +56,6 @@ class FormularioAlunoActivity : AppCompatActivity() {
         binding.activityFormularioAlunoEmail.setText(mAluno.email)
         binding.activityFormularioAlunoPhone.setText(mAluno.telefone)
     }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            dao.findById(idAluno)?.let {
-                    tryLoading(it)
-            }
-        }
-    }
-
 
     private fun bindViews() {
         val campoNome = binding.activityFormularioAlunoNome
@@ -92,10 +90,14 @@ class FormularioAlunoActivity : AppCompatActivity() {
             )
 
             val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
-               MainScope().launch {
-                   Toast.makeText(this@FormularioAlunoActivity, "Erro: $throwable", Toast.LENGTH_LONG)
-                       .show()
-               }
+                MainScope().launch {
+                    Toast.makeText(
+                        this@FormularioAlunoActivity,
+                        "Erro: $throwable",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
             }
 
             lifecycleScope.launch(handler) {

@@ -2,6 +2,7 @@ package br.com.nsbarros.android.agenda.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,8 @@ import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ListaAlunoActivity : AppCompatActivity() {
@@ -29,6 +32,8 @@ class ListaAlunoActivity : AppCompatActivity() {
         AlunoDao(this)
     }
 
+    private val job = Job()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,6 +41,12 @@ class ListaAlunoActivity : AppCompatActivity() {
 
         configurarFab()
         configurarRecyclerView()
+        lifecycleScope.launch(job) {
+          dao.findAll().collect { listAlunos ->
+                reload(listAlunos)
+            }
+
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -86,15 +97,6 @@ class ListaAlunoActivity : AppCompatActivity() {
         recyclerView.adapter = listaAlunoAdapter
 
     }
-
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            val mAlunos = dao.findAll()
-            reload(mAlunos)
-        }
-    }
-
     private fun reload(list: List<Aluno>) {
         listaAlunoAdapter.reload(list)
     }
@@ -106,8 +108,6 @@ class ListaAlunoActivity : AppCompatActivity() {
     private fun deleteAluno(mAluno: Aluno) {
         lifecycleScope.launch {
             dao.delete(mAluno)
-            val list = dao.findAll()
-            reload(list)
         }
     }
 }

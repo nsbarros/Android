@@ -3,6 +3,7 @@ package br.com.nsbarros.android.agenda.dao
 import android.content.Context
 import br.com.nsbarros.android.agenda.database.AppDatabase
 import br.com.nsbarros.android.agenda.model.Aluno
+import kotlinx.coroutines.flow.Flow
 
 class AlunoDao(val context: Context) {
 
@@ -12,11 +13,11 @@ class AlunoDao(val context: Context) {
         db.daoAluno().insertOrReplace(aluno)
     }
 
-    suspend fun findAll(): List<Aluno>{
+     fun findAll(): Flow<List<Aluno>> {
         return db.daoAluno().getAll()
     }
 
-    suspend fun findById(id: Long) : Aluno? {
+     fun findById(id: Long) : Flow<Aluno?> {
         return db.daoAluno().findByID(id)
     }
     suspend fun delete(aluno: Aluno) {
