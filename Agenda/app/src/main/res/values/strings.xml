@@ -5,4 +5,5 @@
     <string name="phone">Telefone:</string>
     <string name="activity_formulario_aluno_btnsalvar">Salvar</string>
     <string name="activity_formulario_aluno_txt_cadastrar_aluno">Cadastrar Aluno</string>
+    <string name="activity_formulario_erro_name_email">Nome ou e-mail incorreto</string>
 </resources>

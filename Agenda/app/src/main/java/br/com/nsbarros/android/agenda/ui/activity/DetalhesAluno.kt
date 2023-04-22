@@ -6,19 +6,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
-import br.com.nsbarros.android.agenda.database.AppDatabase
 import br.com.nsbarros.android.agenda.databinding.ActivityDetalhesAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import coil.load
 import coil.request.Disposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DetalhesAluno : AppCompatActivity() {
 
@@ -32,7 +27,6 @@ class DetalhesAluno : AppCompatActivity() {
 
     private var aluno: Aluno? = null
     private var idAluno: Long = 0L
-    private val scope = CoroutineScope(IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,15 +40,12 @@ class DetalhesAluno : AppCompatActivity() {
     }
 
     private fun buscarAluno() {
-        scope.launch {
+        lifecycleScope.launch {
             aluno = dao.findById(idAluno)
-            withContext(Main){
-                aluno?.let {
-                    tryLoading(it)
-                } ?: finish()
-            }
+            aluno?.let {
+                tryLoading(it)
+            } ?: finish()
         }
-
     }
 
     private fun tryLoading(aluno: Aluno): Disposable {
@@ -97,7 +88,7 @@ class DetalhesAluno : AppCompatActivity() {
 
     private fun deleteAluno() {
         aluno?.let {
-            scope.launch {
+            lifecycleScope.launch {
                 dao.delete(it)
             }
             showNotification()

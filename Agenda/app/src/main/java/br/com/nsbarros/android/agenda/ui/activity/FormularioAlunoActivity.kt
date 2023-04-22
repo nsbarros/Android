@@ -4,16 +4,17 @@ import android.R
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
 import coil.load
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class FormularioAlunoActivity : AppCompatActivity() {
 
@@ -28,8 +29,6 @@ class FormularioAlunoActivity : AppCompatActivity() {
     private val dao by lazy {
         AlunoDao(this)
     }
-
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,11 +51,9 @@ class FormularioAlunoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        scope.launch {
+        lifecycleScope.launch {
             dao.findById(idAluno)?.let {
-                withContext(Dispatchers.Main){
                     tryLoading(it)
-                }
             }
         }
     }
@@ -94,7 +91,17 @@ class FormularioAlunoActivity : AppCompatActivity() {
                 urlFoto,
             )
 
-            scope.launch {
+            val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
+               MainScope().launch {
+                   Toast.makeText(this@FormularioAlunoActivity, "Erro: $throwable", Toast.LENGTH_LONG)
+                       .show()
+               }
+            }
+
+            lifecycleScope.launch(handler) {
+                if (oAluno.nome.isBlank() || oAluno.email.isBlank()) {
+                    throw Exception(getString(br.com.nsbarros.android.agenda.R.string.activity_formulario_erro_name_email))
+                }
                 dao.add(oAluno)
                 finish()
             }

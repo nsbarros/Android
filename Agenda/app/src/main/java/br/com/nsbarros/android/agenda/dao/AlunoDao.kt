@@ -8,26 +8,26 @@ class AlunoDao(val context: Context) {
 
     private val db = AppDatabase.instance(context)
 
-    fun add(aluno: Aluno){
+    suspend fun add(aluno: Aluno){
         db.daoAluno().insertOrReplace(aluno)
     }
 
-    fun findAll(): List<Aluno>{
+    suspend fun findAll(): List<Aluno>{
         return db.daoAluno().getAll()
     }
 
-    fun findById(id: Long) : Aluno? {
+    suspend fun findById(id: Long) : Aluno? {
         return db.daoAluno().findByID(id)
     }
-    fun delete(aluno: Aluno) {
+    suspend fun delete(aluno: Aluno) {
         db.daoAluno().delete(aluno)
     }
 
-    fun findAllNameDesc(): List<Aluno> {
+    suspend fun findAllNameDesc(): List<Aluno> {
         return db.daoAluno().findAllOrderByNameDesc()
     }
 
-    fun findAllNameAsc(): List<Aluno> {
+    suspend fun findAllNameAsc(): List<Aluno> {
         return db.daoAluno().findAllOrderByNameAsc()
     }
 

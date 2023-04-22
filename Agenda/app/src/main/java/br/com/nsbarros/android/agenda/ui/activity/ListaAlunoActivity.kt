@@ -5,21 +5,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ListaAlunoActivity : AppCompatActivity(){
+class ListaAlunoActivity : AppCompatActivity() {
 
-    private val listaAlunoAdapter = ListaAlunoAdapter(this, alunos = emptyList(), whenClickItem =  {aluno -> irParaDetalhes(aluno)},
-    whenLongClickRemove = {aluno -> deleteAluno(aluno)},
-    whenLongClickEdit = {aluno -> editAluno(aluno)})
+    private val listaAlunoAdapter = ListaAlunoAdapter(this,
+        alunos = emptyList(),
+        whenClickItem = { aluno -> irParaDetalhes(aluno) },
+        whenLongClickRemove = { aluno -> deleteAluno(aluno) },
+        whenLongClickEdit = { aluno -> editAluno(aluno) })
 
     private val binding by lazy {
         ActivityListaAlunoBinding.inflate(layoutInflater)
@@ -28,8 +28,6 @@ class ListaAlunoActivity : AppCompatActivity(){
     private val dao by lazy {
         AlunoDao(this)
     }
-
-    private val scope = MainScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,24 +45,20 @@ class ListaAlunoActivity : AppCompatActivity(){
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-       when(item.itemId){
-           R.id.nameasc -> {
-               scope.launch {
-                   var list = withContext(Dispatchers.IO){
-                       dao.findAllNameAsc()
-                   }
-                   reload(list)
-               }
-           }
-           R.id.namedesc -> {
-               scope.launch {
-                   var list = withContext(Dispatchers.IO){
-                       dao.findAllNameDesc()
-                   }
-                   reload(list)
-               }
-           }
-       }
+        when (item.itemId) {
+            R.id.nameasc -> {
+                lifecycleScope.launch {
+                    var list = dao.findAllNameAsc()
+                    reload(list)
+                }
+            }
+            R.id.namedesc -> {
+                lifecycleScope.launch {
+                    var list = dao.findAllNameDesc()
+                    reload(list)
+                }
+            }
+        }
 
         return true
     }
@@ -95,12 +89,8 @@ class ListaAlunoActivity : AppCompatActivity(){
 
     override fun onResume() {
         super.onResume()
-
-
-        scope.launch {
-            val mAlunos = withContext(Dispatchers.IO){
-                dao.findAll()
-            }
+        lifecycleScope.launch {
+            val mAlunos = dao.findAll()
             reload(mAlunos)
         }
     }
@@ -114,12 +104,10 @@ class ListaAlunoActivity : AppCompatActivity(){
     }
 
     private fun deleteAluno(mAluno: Aluno) {
-        scope.launch {
-            withContext(Dispatchers.IO){
-                dao.delete(mAluno)
-                reload(dao.findAll())
-            }
+        lifecycleScope.launch {
+            dao.delete(mAluno)
+            val list = dao.findAll()
+            reload(list)
         }
-
     }
 }
