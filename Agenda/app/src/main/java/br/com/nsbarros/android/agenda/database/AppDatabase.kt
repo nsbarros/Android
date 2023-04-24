@@ -13,7 +13,7 @@ import br.com.nsbarros.android.agenda.model.Usuario
 @Database(
     entities = [Aluno::class,
         Usuario::class],
-    version = 3,
+    version = 13,
     exportSchema = true
 )
 //@TypeConverters(Converters::class)
@@ -26,12 +26,15 @@ abstract class AppDatabase : RoomDatabase() {
 
         @Volatile
         private lateinit var db: AppDatabase
+
         fun instance(context: Context): AppDatabase {
 
             if (::db.isInitialized) return db
 
             return Room.databaseBuilder(context, AppDatabase::class.java, "agenda.db")
                 //.allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
+                //.addMigrations(MIGRATION_1_13)
                 .build().also { db = it };
         }
     }

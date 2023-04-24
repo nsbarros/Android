@@ -1,11 +1,11 @@
 package br.com.nsbarros.android.agenda
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import br.com.nsbarros.android.agenda.database.AppDatabase
+import br.com.nsbarros.android.agenda.dao.usuario.UsuarioDao
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioCadastroUsuarioBinding
 import br.com.nsbarros.android.agenda.model.Usuario
 import kotlinx.coroutines.launch
@@ -16,8 +16,8 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         ActivityFormularioCadastroUsuarioBinding.inflate(layoutInflater)
     }
 
-    private val dao by lazy {
-        AppDatabase.instance(this).daoUsuario()
+    private val daoUsuario by lazy {
+        UsuarioDao(this)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
             Log.i("CadastroUsuario", "onCreate: $novoUsuario")
             lifecycleScope.launch{
                 try {
-                    dao.insert(novoUsuario)
+                    daoUsuario.insert(novoUsuario)
                 } catch (e: Exception) {
                     Toast.makeText(this@FormularioCadastroUsuarioActivity,
                     "Falha ao cadastrar usuário",

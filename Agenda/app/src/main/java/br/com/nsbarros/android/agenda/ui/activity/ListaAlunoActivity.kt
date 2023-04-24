@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.dao.AlunoDao
+import br.com.nsbarros.android.agenda.dao.usuario.UsuarioDao
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
@@ -17,6 +18,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ListaAlunoActivity : AppCompatActivity() {
+
+    private var idUsuario = ""
 
     private val listaAlunoAdapter = ListaAlunoAdapter(this,
         alunos = emptyList(),
@@ -28,8 +31,12 @@ class ListaAlunoActivity : AppCompatActivity() {
         ActivityListaAlunoBinding.inflate(layoutInflater)
     }
 
-    private val dao by lazy {
+    private val daoAluno by lazy {
         AlunoDao(this)
+    }
+
+    private val daoUsuario by lazy {
+        UsuarioDao(this)
     }
 
     private val job = Job()
@@ -41,9 +48,22 @@ class ListaAlunoActivity : AppCompatActivity() {
 
         configurarFab()
         configurarRecyclerView()
+
+        intent.getStringExtra(IDALUNO).let { idUser ->
+            idUsuario = idUser.toString()
+        }
+
         lifecycleScope.launch(job) {
-          dao.findAll().collect { listAlunos ->
+            daoAluno.findAll().collect { listAlunos ->
                 reload(listAlunos)
+            }
+
+            launch {
+                daoUsuario.findUsuarioByID(idUsuario).collect { result->
+                    result?.let{
+                        Log.i("TESTE", "${result.id}")
+                    }
+                }
             }
 
         }
@@ -59,13 +79,13 @@ class ListaAlunoActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.nameasc -> {
                 lifecycleScope.launch {
-                    var list = dao.findAllNameAsc()
+                    var list = daoAluno.findAllNameAsc()
                     reload(list)
                 }
             }
             R.id.namedesc -> {
                 lifecycleScope.launch {
-                    var list = dao.findAllNameDesc()
+                    var list = daoAluno.findAllNameDesc()
                     reload(list)
                 }
             }
@@ -107,7 +127,7 @@ class ListaAlunoActivity : AppCompatActivity() {
 
     private fun deleteAluno(mAluno: Aluno) {
         lifecycleScope.launch {
-            dao.delete(mAluno)
+            daoAluno.delete(mAluno)
         }
     }
 }

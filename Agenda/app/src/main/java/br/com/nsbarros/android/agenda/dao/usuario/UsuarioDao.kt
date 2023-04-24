@@ -14,9 +14,10 @@ class UsuarioDao(context: Context) : UsuarioRepository {
     override suspend fun delete(id: String) = dao.deleteByID(id)
 
 
-    override suspend fun findUsuarioByID(id: String) = dao.findUsuarioById(id)
+    override fun findUsuarioByID(id: String) = dao.findUsuarioById(id)
 
 
     override suspend fun findAllUsuarios() = dao.findAllUsuarios()
+    override suspend fun autenticar(usuarioid: String, senhausuario: String) = dao.autenticar(usuarioid, senhausuario)
 
 }
