@@ -7,7 +7,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
+import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
@@ -31,12 +33,20 @@ class FormularioAlunoActivity : AppCompatActivity() {
         AlunoDao(this)
     }
 
+    private var IDUSUARIO = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         bindViews()
         idAluno = intent.getLongExtra(IDALUNO, 0L)
+
         lifecycleScope.launch {
+            dataStore.data.collect{preferences ->
+                preferences[USUARIOLOGADO]?.let {userLogado ->
+                    IDUSUARIO = userLogado
+                }
+            }
             dao.findById(idAluno).collect { mAluno ->
                 mAluno?.let {
                     tryLoading(it)

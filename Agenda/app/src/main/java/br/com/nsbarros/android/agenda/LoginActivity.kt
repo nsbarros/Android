@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.database.AppDatabase
 import br.com.nsbarros.android.agenda.databinding.ActivityLoginBinding
@@ -36,10 +38,11 @@ class LoginActivity : AppCompatActivity() {
             lifecycleScope.launch{
                 val user = daoUsuario.autenticar(usuario, senha)
                 user?.let {user ->
-                    startActivity(Intent(this@LoginActivity, ListaAlunoActivity::class.java).putExtra(
-                        IDALUNO,
-                        user.id
-                    ))
+                    startActivity(Intent(this@LoginActivity, ListaAlunoActivity::class.java).also {
+                        dataStore.edit { preferences->
+                            preferences[USUARIOLOGADO] = user.id
+                        }
+                    })
                 } ?: showErro()
             }
         }

@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
+import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
+import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityDetalhesAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import coil.load
@@ -28,12 +30,19 @@ class DetalhesAluno : AppCompatActivity() {
 
     private var aluno: Aluno? = null
     private var idAluno: Long = 0L
+    private var IdUsuario = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
        idAluno = intent.getLongExtra(IDALUNO, 0L)
         lifecycleScope.launch {
+            dataStore.data.collect{preferences->
+                preferences[USUARIOLOGADO]?.let {userLogado ->
+                    IdUsuario = userLogado
+                }
+
+            }
             dao.findById(idAluno).collect { mAluno ->
                 aluno = mAluno
                 aluno?.let {

@@ -8,8 +8,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
+import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.dao.usuario.UsuarioDao
+import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
@@ -49,23 +51,24 @@ class ListaAlunoActivity : AppCompatActivity() {
         configurarFab()
         configurarRecyclerView()
 
-        intent.getStringExtra(IDALUNO).let { idUser ->
-            idUsuario = idUser.toString()
-        }
-
         lifecycleScope.launch(job) {
             daoAluno.findAll().collect { listAlunos ->
                 reload(listAlunos)
             }
 
             launch {
-                daoUsuario.findUsuarioByID(idUsuario).collect { result->
-                    result?.let{
-                        Log.i("TESTE", "${result.id}")
+                dataStore.data.collect { preferences ->
+                    preferences[USUARIOLOGADO]?.let { userDateStore ->
+                        idUsuario = userDateStore
+                        daoUsuario.findUsuarioByID(idUsuario).collect { result ->
+                            result?.let {
+                                Log.i("TESTE", "${result.id}")
+                            }
+                        }
                     }
                 }
-            }
 
+            }
         }
     }
 
@@ -117,6 +120,7 @@ class ListaAlunoActivity : AppCompatActivity() {
         recyclerView.adapter = listaAlunoAdapter
 
     }
+
     private fun reload(list: List<Aluno>) {
         listaAlunoAdapter.reload(list)
     }
