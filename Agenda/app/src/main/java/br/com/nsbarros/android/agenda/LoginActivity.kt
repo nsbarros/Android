@@ -34,17 +34,20 @@ class LoginActivity : AppCompatActivity() {
         binding.activityLoginBotaoEntrar.setOnClickListener {
             val usuario = binding.activityLoginUsuario.text.toString()
             val senha = binding.activityLoginSenha.text.toString()
+            autentica(usuario, senha)
+        }
+    }
 
-            lifecycleScope.launch{
-                val user = daoUsuario.autenticar(usuario, senha)
-                user?.let {user ->
-                    startActivity(Intent(this@LoginActivity, ListaAlunoActivity::class.java).also {
-                        dataStore.edit { preferences->
-                            preferences[USUARIOLOGADO] = user.id
-                        }
-                    })
-                } ?: showErro()
-            }
+    private fun autentica(usuario: String, senha: String) {
+        lifecycleScope.launch {
+            val user = daoUsuario.autenticar(usuario, senha)
+            user?.let { user ->
+                startActivity(Intent(this@LoginActivity, ListaAlunoActivity::class.java).also {
+                    dataStore.edit { preferences ->
+                        preferences[USUARIOLOGADO] = user.id
+                    }
+                })
+            } ?: showErro()
         }
     }
 

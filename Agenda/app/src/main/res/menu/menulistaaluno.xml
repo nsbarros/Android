@@ -9,6 +9,7 @@
             <menu >
                 <item android:id="@+id/nameasc" android:title="Nome asc"/>
                 <item android:id="@+id/namedesc" android:title="Nome desc"/>
+                <item android:id="@+id/deslogar" android:title="Sair"/>
             </menu>
         </item>
 

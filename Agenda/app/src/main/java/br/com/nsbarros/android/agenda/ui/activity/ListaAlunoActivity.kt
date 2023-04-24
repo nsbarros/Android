@@ -6,7 +6,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
+import br.com.nsbarros.android.agenda.LoginActivity
 import br.com.nsbarros.android.agenda.R
 import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
@@ -15,8 +17,11 @@ import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class ListaAlunoActivity : AppCompatActivity() {
@@ -51,25 +56,41 @@ class ListaAlunoActivity : AppCompatActivity() {
         configurarFab()
         configurarRecyclerView()
 
+        verificarUsuarioLogado()
+    }
+
+    private fun verificarUsuarioLogado() {
         lifecycleScope.launch(job) {
+            dataStore.data.collect { preferences ->
+                preferences[USUARIOLOGADO]?.let { userDateStore ->
+                    idUsuario = userDateStore
+                    buscarUsuario()
+                } ?: goLoginActivity()
+            }
+        }
+    }
+
+    private suspend fun buscarUsuario() {
+        lifecycleScope.launch {
+            daoUsuario.findUsuarioByID(idUsuario).firstOrNull()?.let {
+                buscarAlunosUsuario()
+            }
+        }
+    }
+
+    private suspend fun buscarAlunosUsuario() {
+        lifecycleScope.launch {
             daoAluno.findAll().collect { listAlunos ->
                 reload(listAlunos)
             }
-
-            launch {
-                dataStore.data.collect { preferences ->
-                    preferences[USUARIOLOGADO]?.let { userDateStore ->
-                        idUsuario = userDateStore
-                        daoUsuario.findUsuarioByID(idUsuario).collect { result ->
-                            result?.let {
-                                Log.i("TESTE", "${result.id}")
-                            }
-                        }
-                    }
-                }
-
-            }
         }
+    }
+
+    private fun goLoginActivity() {
+        Intent(this@ListaAlunoActivity, LoginActivity::class.java).apply {
+            startActivity(this)
+        }
+        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -90,6 +111,13 @@ class ListaAlunoActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     var list = daoAluno.findAllNameDesc()
                     reload(list)
+                }
+            }
+            R.id.deslogar -> {
+                lifecycleScope.launch {
+                    dataStore.edit { preferences ->
+                        preferences.remove(USUARIOLOGADO)
+                    }
                 }
             }
         }

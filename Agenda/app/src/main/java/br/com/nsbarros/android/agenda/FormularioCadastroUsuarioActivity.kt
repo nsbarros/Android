@@ -27,19 +27,29 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
 
     private fun configuraBotaoCadastrar() {
         binding.activityFormularioCadastroBotaoCadastrar.setOnClickListener {
-            val novoUsuario = criaUsuario()
-            Log.i("CadastroUsuario", "onCreate: $novoUsuario")
-            lifecycleScope.launch{
-                try {
-                    daoUsuario.insert(novoUsuario)
-                } catch (e: Exception) {
-                    Toast.makeText(this@FormularioCadastroUsuarioActivity,
-                    "Falha ao cadastrar usuário",
-                    Toast.LENGTH_LONG).show()
-                }
-            }
+            cadastrar()
             finish()
         }
+    }
+
+    private fun cadastrar() {
+        criaUsuario().let{usuario ->
+            lifecycleScope.launch {
+                try {
+                    daoUsuario.insert(usuario)
+                } catch (e: Exception) {
+                    showErro()
+                }
+            }
+        }
+    }
+
+    private fun showErro() {
+        Toast.makeText(
+            this@FormularioCadastroUsuarioActivity,
+            "Falha ao cadastrar usuário",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun criaUsuario(): Usuario {
