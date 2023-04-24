@@ -114,15 +114,19 @@ class ListaAlunoActivity : AppCompatActivity() {
                 }
             }
             R.id.deslogar -> {
-                lifecycleScope.launch {
-                    dataStore.edit { preferences ->
-                        preferences.remove(USUARIOLOGADO)
-                    }
-                }
+                deslogarUsuario()
             }
         }
 
         return true
+    }
+
+    private fun deslogarUsuario() {
+        lifecycleScope.launch {
+            dataStore.edit { preferences ->
+                preferences.remove(USUARIOLOGADO)
+            }
+        }
     }
 
     private fun configurarFab() {
