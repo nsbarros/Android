@@ -1,16 +1,11 @@
 package br.com.nsbarros.android.agenda.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.R
-import br.com.nsbarros.android.agenda.USUARIOLOGADO
-import br.com.nsbarros.android.agenda.dao.AlunoDao
-import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityDetalhesAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import coil.load
@@ -18,40 +13,34 @@ import coil.request.Disposable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class DetalhesAluno : AppCompatActivity() {
+class DetalhesAluno : BaseActitivyUsuario() {
 
     private val binding by lazy {
         ActivityDetalhesAlunoBinding.inflate(layoutInflater)
     }
 
-    private val dao by lazy {
-        AlunoDao(this)
-    }
-
-    private var aluno: Aluno? = null
-    private var idAluno: Long = 0L
-    private var IdUsuario = ""
+    private var mAluno: Aluno? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-       idAluno = intent.getLongExtra(IDALUNO, 0L)
-        lifecycleScope.launch {
-            dataStore.data.collect{preferences->
-                preferences[USUARIOLOGADO]?.let {userLogado ->
-                    IdUsuario = userLogado
-                }
 
+        lifecycleScope.launch {
+            usuario.collect{
+                it?.let {
+                   aluno.collect{itAluno->
+                       itAluno?.let{
+                           bind(it)
+                           mAluno = it
+                       } ?: finish()
+                   }
+                }
             }
-            dao.findById(idAluno).collect { mAluno ->
-                aluno = mAluno
-                aluno?.let {
-                    tryLoading(it)
-                } ?: finish()
-            }
+
         }
     }
-    private fun tryLoading(aluno: Aluno): Disposable {
+
+    private fun bind(aluno: Aluno): Disposable {
         binding.activityDetalhesAlunoButtonName.text = aluno.nome
         binding.activityDetalhesAlunoDescricaoAluno.text =
             "Nome: ${aluno.nome}, \n Email: ${aluno.email}\n Telefone: ${aluno.telefone}"
@@ -72,6 +61,8 @@ class DetalhesAluno : AppCompatActivity() {
         when(item.itemId){
             R.id.remove -> {
                 deleteAluno()
+                finish()
+                showNotification()
             }
             R.id.edit -> {
                 editAluno()
@@ -80,27 +71,8 @@ class DetalhesAluno : AppCompatActivity() {
         return true
     }
 
-    private fun editAluno() {
-        aluno?.let {
-            Intent(this, FormularioAlunoActivity::class.java).apply {
-                putExtra(IDALUNO, idAluno)
-                startActivity(this)
-            }
-        }
-    }
-
-    private fun deleteAluno() {
-        aluno?.let {
-            lifecycleScope.launch {
-                dao.delete(it)
-            }
-            showNotification()
-            finish()
-        }
-    }
-
     private fun showNotification() {
-        Toast.makeText(this, "${aluno?.nome}, deletado.", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "${mAluno?.nome}, deletado.", Toast.LENGTH_LONG).show()
     }
 
 }

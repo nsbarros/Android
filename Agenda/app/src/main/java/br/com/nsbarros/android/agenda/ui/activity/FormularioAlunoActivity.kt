@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
-import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityFormularioAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.dialog.DialogFormularioImagem
@@ -17,13 +14,12 @@ import coil.load
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
-class FormularioAlunoActivity : AppCompatActivity() {
+class FormularioAlunoActivity : BaseActitivyUsuario() {
 
     private var urlFoto: String = ""
-
-    private var idAluno = 0L;
 
     private val binding by lazy {
         ActivityFormularioAlunoBinding.inflate(layoutInflater)
@@ -33,23 +29,18 @@ class FormularioAlunoActivity : AppCompatActivity() {
         AlunoDao(this)
     }
 
-    private var IDUSUARIO = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         bindViews()
-        idAluno = intent.getLongExtra(IDALUNO, 0L)
 
         lifecycleScope.launch {
-            dataStore.data.collect{preferences ->
-                preferences[USUARIOLOGADO]?.let {userLogado ->
-                    IDUSUARIO = userLogado
-                }
-            }
-            dao.findById(idAluno).collect { mAluno ->
-                mAluno?.let {
-                    tryLoading(it)
+
+            usuario.collect{ usuario ->
+                usuario?.let {
+                    aluno.filterNotNull().collect{ aluno ->
+                        tryLoading(aluno)
+                    }
                 }
             }
         }
@@ -99,16 +90,7 @@ class FormularioAlunoActivity : AppCompatActivity() {
                 urlFoto,
             )
 
-            val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
-                MainScope().launch {
-                    Toast.makeText(
-                        this@FormularioAlunoActivity,
-                        "Erro: $throwable",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
-            }
+            val handler = coroutineExceptionHandler()
 
             lifecycleScope.launch(handler) {
                 if (oAluno.nome.isBlank() || oAluno.email.isBlank()) {
@@ -119,6 +101,20 @@ class FormularioAlunoActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    private fun coroutineExceptionHandler(): CoroutineExceptionHandler {
+        val handler = CoroutineExceptionHandler { coroutineContext, throwable ->
+            MainScope().launch {
+                Toast.makeText(
+                    this@FormularioAlunoActivity,
+                    "Erro: $throwable",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+        }
+        return handler
     }
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {

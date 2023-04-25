@@ -1,38 +1,24 @@
 package br.com.nsbarros.android.agenda.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
-import br.com.nsbarros.android.agenda.LoginActivity
 import br.com.nsbarros.android.agenda.R
-import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
-import br.com.nsbarros.android.agenda.dao.usuario.UsuarioDao
-import br.com.nsbarros.android.agenda.dataStore
 import br.com.nsbarros.android.agenda.databinding.ActivityListaAlunoBinding
 import br.com.nsbarros.android.agenda.model.Aluno
 import br.com.nsbarros.android.agenda.ui.recyclerview.ListaAlunoAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class ListaAlunoActivity : AppCompatActivity() {
-
-    private var idUsuario = ""
+class ListaAlunoActivity : BaseActitivyUsuario() {
 
     private val listaAlunoAdapter = ListaAlunoAdapter(this,
         alunos = emptyList(),
-        whenClickItem = { aluno -> irParaDetalhes(aluno) },
-        whenLongClickRemove = { aluno -> deleteAluno(aluno) },
-        whenLongClickEdit = { aluno -> editAluno(aluno) })
+        whenClickItem = {  irParaDetalhes() },
+        whenLongClickRemove = {  deleteAluno() },
+        whenLongClickEdit = {  editAluno() })
 
     private val binding by lazy {
         ActivityListaAlunoBinding.inflate(layoutInflater)
@@ -42,12 +28,6 @@ class ListaAlunoActivity : AppCompatActivity() {
         AlunoDao(this)
     }
 
-    private val daoUsuario by lazy {
-        UsuarioDao(this)
-    }
-
-    private val job = Job()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,42 +36,17 @@ class ListaAlunoActivity : AppCompatActivity() {
         configurarFab()
         configurarRecyclerView()
 
-        verificarUsuarioLogado()
-    }
-
-    private fun verificarUsuarioLogado() {
-        lifecycleScope.launch(job) {
-            dataStore.data.collect { preferences ->
-                preferences[USUARIOLOGADO]?.let { userDateStore ->
-                    idUsuario = userDateStore
-                    buscarUsuario()
-                } ?: goLoginActivity()
+        lifecycleScope.launch{
+            usuario.collect() {
+                it.let {
+                    daoAluno.findAll().collect { listAlunos ->
+                        reload(listAlunos)
+                    }
+                }
             }
         }
     }
 
-    private suspend fun buscarUsuario() {
-        lifecycleScope.launch {
-            daoUsuario.findUsuarioByID(idUsuario).firstOrNull()?.let {
-                buscarAlunosUsuario()
-            }
-        }
-    }
-
-    private suspend fun buscarAlunosUsuario() {
-        lifecycleScope.launch {
-            daoAluno.findAll().collect { listAlunos ->
-                reload(listAlunos)
-            }
-        }
-    }
-
-    private fun goLoginActivity() {
-        Intent(this@ListaAlunoActivity, LoginActivity::class.java).apply {
-            startActivity(this)
-        }
-        finish()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menulistaaluno, menu)
@@ -114,19 +69,13 @@ class ListaAlunoActivity : AppCompatActivity() {
                 }
             }
             R.id.deslogar -> {
-                deslogarUsuario()
+                lifecycleScope.launch{
+                    deslogarUsuario()
+                }
             }
         }
 
         return true
-    }
-
-    private fun deslogarUsuario() {
-        lifecycleScope.launch {
-            dataStore.edit { preferences ->
-                preferences.remove(USUARIOLOGADO)
-            }
-        }
     }
 
     private fun configurarFab() {
@@ -134,17 +83,6 @@ class ListaAlunoActivity : AppCompatActivity() {
         fab.setOnClickListener {
             irParaFormulario()
         }
-    }
-
-    private fun irParaFormulario() {
-        val intentFormulario = Intent(this, FormularioAlunoActivity::class.java)
-        startActivity(intentFormulario)
-    }
-
-    private fun irParaDetalhes(aluno: Aluno) {
-        val intentGoDetails = Intent(this, DetalhesAluno::class.java)
-        intentGoDetails.putExtra(IDALUNO, aluno.id)
-        startActivity(intentGoDetails)
     }
 
     private fun configurarRecyclerView() {
@@ -155,15 +93,5 @@ class ListaAlunoActivity : AppCompatActivity() {
 
     private fun reload(list: List<Aluno>) {
         listaAlunoAdapter.reload(list)
-    }
-
-    private fun editAluno(mAluno: Aluno) {
-        irParaDetalhes(mAluno)
-    }
-
-    private fun deleteAluno(mAluno: Aluno) {
-        lifecycleScope.launch {
-            daoAluno.delete(mAluno)
-        }
     }
 }
