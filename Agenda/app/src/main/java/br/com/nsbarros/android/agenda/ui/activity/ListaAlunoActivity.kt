@@ -16,9 +16,11 @@ class ListaAlunoActivity : BaseActitivyUsuario() {
 
     private val listaAlunoAdapter = ListaAlunoAdapter(this,
         alunos = emptyList(),
-        whenClickItem = {  irParaDetalhes() },
-        whenLongClickRemove = {  deleteAluno() },
-        whenLongClickEdit = {  editAluno() })
+        whenClickItem = { aluno -> irParaDetalhes(aluno) },
+        whenLongClickRemove = { aluno -> deleteAluno(aluno) },
+        whenLongClickEdit = { aluno ->
+            editAluno(aluno)
+        })
 
     private val binding by lazy {
         ActivityListaAlunoBinding.inflate(layoutInflater)
@@ -36,7 +38,7 @@ class ListaAlunoActivity : BaseActitivyUsuario() {
         configurarFab()
         configurarRecyclerView()
 
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             usuario.collect() {
                 it.let {
                     daoAluno.findAll().collect { listAlunos ->
@@ -69,7 +71,7 @@ class ListaAlunoActivity : BaseActitivyUsuario() {
                 }
             }
             R.id.deslogar -> {
-                lifecycleScope.launch{
+                lifecycleScope.launch {
                     deslogarUsuario()
                 }
             }

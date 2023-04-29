@@ -29,6 +29,8 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
         AlunoDao(this)
     }
 
+    private var id: Long = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -48,6 +50,7 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
 
     private fun tryLoading(mAluno: Aluno) {
         urlFoto = mAluno.url.toString()
+        id = mAluno.id
         binding.activityFormularioAlunoImageview.load(mAluno.url) {
             error(R.drawable.stat_notify_error)
             fallback(R.drawable.stat_notify_error)
@@ -119,7 +122,7 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
         return Aluno(
-            idAluno.toLong(),
+            id,
             nome,
             email,
             phone,

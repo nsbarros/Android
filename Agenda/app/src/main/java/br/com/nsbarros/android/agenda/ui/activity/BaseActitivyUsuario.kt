@@ -31,7 +31,7 @@ abstract class BaseActitivyUsuario : AppCompatActivity() {
     protected var usuario: StateFlow<Usuario?> = _usuario
 
     private var _idAluno = 0L
-    protected val idAluno = _idAluno
+    protected var idAluno = _idAluno
 
     private var _Aluno: MutableStateFlow<Aluno?> = MutableStateFlow(null)
     protected var aluno: StateFlow<Aluno?> = _Aluno
@@ -77,20 +77,29 @@ abstract class BaseActitivyUsuario : AppCompatActivity() {
         finish()
     }
 
-    protected fun irParaFormulario() {
+    protected fun irParaFormulario(aluno: Aluno? = null) {
+        alterarIdAluno(aluno)
         val intentFormulario = Intent(this, FormularioAlunoActivity::class.java)
-        intentFormulario.putExtra(IDALUNO, idAluno)
+        intentFormulario.putExtra(IDALUNO, _idAluno)
         startActivity(intentFormulario)
     }
 
-    protected fun irParaDetalhes() {
+    private fun alterarIdAluno(aluno: Aluno?) {
+        aluno.let {
+            _idAluno = it?.id ?: 0L
+            idAluno = _idAluno
+        }
+    }
+
+    protected fun irParaDetalhes(aluno: Aluno) {
+        alterarIdAluno(aluno)
         val intentGoDetails = Intent(this, DetalhesAluno::class.java)
-        intentGoDetails.putExtra(IDALUNO, idAluno)
+        intentGoDetails.putExtra(IDALUNO, _idAluno)
         startActivity(intentGoDetails)
     }
 
-    protected fun editAluno() {
-        irParaDetalhes()
+    protected fun editAluno(aluno: Aluno) {
+        irParaFormulario(aluno)
     }
 
     private suspend fun buscarAluno(){
@@ -100,9 +109,9 @@ abstract class BaseActitivyUsuario : AppCompatActivity() {
     }
 
 
-    protected fun deleteAluno() {
+    protected fun deleteAluno(aluno: Aluno) {
         lifecycleScope.launch {
-            AlunoDao.delete(aluno.filterNotNull().first())
+            AlunoDao.delete(aluno)
         }
     }
 

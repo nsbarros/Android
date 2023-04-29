@@ -26,14 +26,14 @@ class DetalhesAluno : BaseActitivyUsuario() {
         setContentView(binding.root)
 
         lifecycleScope.launch {
-            usuario.collect{
+            usuario.collect {
                 it?.let {
-                   aluno.collect{itAluno->
-                       itAluno?.let{
-                           bind(it)
-                           mAluno = it
-                       } ?: finish()
-                   }
+                    aluno.collect { itAluno ->
+                        itAluno?.let {
+                            bind(it)
+                            mAluno = it
+                        } ?: finish()
+                    }
                 }
             }
 
@@ -58,14 +58,18 @@ class DetalhesAluno : BaseActitivyUsuario() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        when(item.itemId){
+        when (item.itemId) {
             R.id.remove -> {
-                deleteAluno()
-                finish()
-                showNotification()
+                mAluno?.let { aluno ->
+                    deleteAluno(aluno)
+                    finish()
+                    showNotification()
+                }
             }
             R.id.edit -> {
-                editAluno()
+                mAluno?.let { aluno ->
+                    editAluno(aluno)
+                }
             }
         }
         return true
