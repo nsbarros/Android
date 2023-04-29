@@ -10,14 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Agenda">
         <activity
+            android:name=".PerfilUsuarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".FormularioCadastroUsuarioActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.Agenda.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.Agenda.NoActionBar"></activity>
         <activity
             android:name=".ui.activity.DetalhesAluno"
             android:exported="false" />

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import br.com.nsbarros.android.agenda.LoginActivity
+import br.com.nsbarros.android.agenda.PerfilUsuarioActivity
 import br.com.nsbarros.android.agenda.USUARIOLOGADO
 import br.com.nsbarros.android.agenda.dao.AlunoDao
 import br.com.nsbarros.android.agenda.dao.usuario.UsuarioDao
@@ -56,7 +57,7 @@ abstract class BaseActitivyUsuario : AppCompatActivity() {
                 preferences[USUARIOLOGADO]?.let { userDateStore ->
                     buscarUsuario(userDateStore)
                 } ?: goLoginActivity()
-            }
+}
     }
 
     private suspend fun buscarUsuario(idUsuario: String) {
@@ -82,6 +83,12 @@ abstract class BaseActitivyUsuario : AppCompatActivity() {
         val intentFormulario = Intent(this, FormularioAlunoActivity::class.java)
         intentFormulario.putExtra(IDALUNO, _idAluno)
         startActivity(intentFormulario)
+    }
+
+    protected fun irParaPerfil(){
+        Intent(this, PerfilUsuarioActivity::class.java).apply {
+            startActivity(this)
+        }
     }
 
     private fun alterarIdAluno(aluno: Aluno?) {

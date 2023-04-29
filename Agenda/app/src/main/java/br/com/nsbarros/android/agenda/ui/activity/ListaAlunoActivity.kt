@@ -71,9 +71,7 @@ class ListaAlunoActivity : BaseActitivyUsuario() {
                 }
             }
             R.id.deslogar -> {
-                lifecycleScope.launch {
-                    deslogarUsuario()
-                }
+                irParaPerfil()
             }
         }
 
