@@ -40,9 +40,11 @@ class ListaAlunoActivity : BaseActitivyUsuario() {
 
         lifecycleScope.launch {
             usuario.collect() {
-                it.let {
-                    daoAluno.findAll().collect { listAlunos ->
-                        reload(listAlunos)
+                it.let {usuario->
+                    usuario?.let {
+                        daoAluno.findAll(usuario.id).collect { listAlunos ->
+                            reload(listAlunos)
+                        }
                     }
                 }
             }

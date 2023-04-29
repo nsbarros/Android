@@ -16,8 +16,8 @@ interface AlunoDaoI {
     @Delete
     suspend fun delete(aluno: Aluno)
 
-    @Query("SELECT * FROM Aluno")
-     fun getAll() : Flow<List<Aluno>>
+    @Query("SELECT * FROM Aluno WHERE usuarioId  = :id")
+     fun getAll(id: String) : Flow<List<Aluno>>
 
     @Query("SELECT * FROM Aluno WHERE id =:id")
      fun findByID(id: Long): Flow<Aluno?>

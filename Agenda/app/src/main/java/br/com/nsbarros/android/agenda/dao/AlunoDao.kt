@@ -13,8 +13,8 @@ class AlunoDao(val context: Context) {
         db.daoAluno().insertOrReplace(aluno)
     }
 
-     fun findAll(): Flow<List<Aluno>> {
-        return db.daoAluno().getAll()
+     fun findAll(usuarioId: String): Flow<List<Aluno>> {
+        return db.daoAluno().getAll(usuarioId)
     }
 
      fun findById(id: Long) : Flow<Aluno?> {

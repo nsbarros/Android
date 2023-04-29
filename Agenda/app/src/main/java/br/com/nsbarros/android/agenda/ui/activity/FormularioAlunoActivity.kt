@@ -30,6 +30,7 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
     }
 
     private var id: Long = 0L
+    private var idUsuario: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +40,8 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
         lifecycleScope.launch {
 
             usuario.collect{ usuario ->
-                usuario?.let {
+                usuario?.let {usuario->
+                    idUsuario = usuario.id
                     aluno.filterNotNull().collect{ aluno ->
                         tryLoading(aluno)
                     }
@@ -122,11 +124,12 @@ class FormularioAlunoActivity : BaseActitivyUsuario() {
 
     private fun criarAluno(nome: String, email: String, phone: String, url: String): Aluno {
         return Aluno(
-            id,
-            nome,
-            email,
-            phone,
-            url,
+            id = id,
+            nome = nome,
+            email = email,
+            telefone = phone,
+            url = url,
+            usuarioId = idUsuario
         )
 
     }
